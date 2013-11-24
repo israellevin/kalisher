@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+        <meta charset="utf-8">
+        <title>Interactive demo</title>
+        <style>
+            body{
+                direction: rtl;
+            }
+        </style>
+        <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+        <script type="text/javascript">
+
+function log(msg){
+    console.log(msg);
+};
+
+function get(url, callback){
+    $.ajax({
+        url: url + '.jsonp',
+        dataType: 'jsonp',
+        success:function(data){
+            if('string' === typeof data.error) log(data.error);
+            callback(data);
+        },
+        error:function(){
+            log('Unable to retrieve ' + url);
+        }
+    });
+};
+
+function update(){
+    get($('#cmd').val(), function(data){
+        $('#curframe').unbind('load').load(update).attr('src', data.split(';')[0] + '?' + new Date().getTime());
+    });
+}
+
+$(function(){
+    update();
+});
+        </script>
+    </head>
+    <body>
+        <h1>ברוכים הבאים למעבדת אינטראקטיב</h1>
+        <div>כרגע מחוברות 1 מצלמות</div>
+        <h2>מצלמה 1</h2>
+        <div><select id="cmd">
+                <option value="img" selected>צילום</option>
+                <option value="dif">הסרת רקע</option>
+                <option value="act">סף תנועה</option>
+                <option value="blob">קונטור תנועה</option>
+                <option value="face">זיהוי פרצופים</option>
+        </select></div>
+        <img id="curframe">
+        <div id="log"></div>
+    </body>
+</html>
